@@ -10,7 +10,7 @@ async function bootstrap() {
     .setTitle('Server Challenge')
     .setDescription('Server challenge')
     .setVersion('1.0')
-    .addTag('cats')
+    .addTag('backend')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
