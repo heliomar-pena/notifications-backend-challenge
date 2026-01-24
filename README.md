@@ -17,7 +17,11 @@ The system must allow to each user manage and send notifications in different ch
 ## How to run the APP
 
 ```bash
-docker-compose up
+docker compose --profile api up
 ```
 
+## How to run the tests
 
+```bash
+docker compose --profile test up
+```

@@ -2,9 +2,14 @@ services:
   api:
     depends_on:
       - postgres
+    profiles:
+      - api
     build:
       context: ./
       target: backend-dev
+    environment:
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
     develop:
       watch:
         - path: ./
@@ -26,6 +31,8 @@ services:
 
   postgres:
     image: postgres:17
+    profiles:
+      - api
     environment:
       POSTGRES_USER: drop4@b23!
       POSTGRES_PASSWORD: klazX.@345
@@ -34,6 +41,45 @@ services:
       - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  api_test:
+    depends_on:
+      - postgres_test
+    build:
+      context: ./
+      target: test
+    environment:
+      - DATABASE_HOST=postgres_test
+      - DATABASE_PORT=5432
+    profiles:
+      - test
+    develop:
+      watch:
+        - path: ./
+          action: sync
+          ignore:
+            - ./node_modules/
+            - ./package.json
+            - ./.env
+            - ./.env.test
+          target: /usr/local/app/src
+        - path: ./package.json
+          action: rebuild
+        - path: ./.env
+          action: rebuild
+        - path: ./.env.test
+          action: rebuild
+
+  postgres_test:
+    image: postgres:17
+    profiles:
+      - test
+    environment:
+      POSTGRES_USER: test4@b23!
+      POSTGRES_PASSWORD: test.@345
+      POSTGRES_DB: test_db
+    ports:
+      - "5434:5432"
 
 volumes:
   pgdata:
