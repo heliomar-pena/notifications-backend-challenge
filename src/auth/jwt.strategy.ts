@@ -15,7 +15,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
     });
-    console.log({ auth: auth });
   }
 
   validate(payload: { sub: string }): string {

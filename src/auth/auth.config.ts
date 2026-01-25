@@ -8,5 +8,6 @@ export const authConfig = registerAs('auth', () => {
 
   return {
     jwtSecret: process.env.JWT_SECRET,
+    salt: process.env.HASH_SALT ?? 10,
   };
 });

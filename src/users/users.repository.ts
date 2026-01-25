@@ -11,8 +11,10 @@ export class UsersRepository {
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    return this.usersRepository.insert(createUserDto);
+  async create(createUserDto: CreateUserDto): Promise<User['id'] | undefined> {
+    const result = await this.usersRepository.insert(createUserDto);
+
+    return result.identifiers[0].id as User['id'];
   }
 
   findAll() {
