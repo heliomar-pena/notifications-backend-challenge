@@ -9,7 +9,7 @@ services:
             - ./package.json
             - ./.env
             - ./.env.test
-          target: /usr/local/app/src
+          target: /app
         - path: ./package.json
           action: rebuild
         - path: ./.env
