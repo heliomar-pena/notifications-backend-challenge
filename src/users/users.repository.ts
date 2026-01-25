@@ -19,8 +19,12 @@ export class UsersRepository {
     return this.usersRepository.find();
   }
 
-  findOne(id: number) {
+  findOne(id: User['id']) {
     return this.usersRepository.findOne({ where: { id: id } });
+  }
+
+  findByUsername(username: User['username']) {
+    return this.usersRepository.findOneBy({ username: username });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

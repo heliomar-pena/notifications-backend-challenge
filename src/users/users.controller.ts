@@ -8,10 +8,16 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
+import type { Request } from 'express';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
@@ -23,14 +29,21 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @Get('/me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  me(@Req() request: Request) {
+    console.log({ user: request.user });
+  }
+
   @Get()
   findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  findOne(@Param('id') id: User['id']) {
+    return this.usersService.findOne(id);
   }
 
   @Patch(':id')
