@@ -5,7 +5,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { CreateUserDto } from 'src/auth/dto/create-user.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UsersRepository } from 'src/users/users.repository';
 import bcrypt from 'bcrypt';
@@ -22,10 +22,10 @@ export class AuthService {
   ) {}
 
   async validateUser(
-    username: string,
+    email: string,
     pass: string,
   ): Promise<Omit<User, 'password'> | null> {
-    const user = await this.usersRepository.findByUsername(username);
+    const user = await this.usersRepository.findByEmail(email);
 
     if (!user) return null;
 
@@ -33,7 +33,7 @@ export class AuthService {
 
     if (user && doesPasswordMatch) {
       return {
-        username: user.username,
+        email: user.email,
         id: user.id,
       };
     }
@@ -49,16 +49,14 @@ export class AuthService {
   }
 
   async create(createUserDto: CreateUserDto) {
-    const user = await this.usersRepository.findByUsername(
-      createUserDto.username,
-    );
+    const user = await this.usersRepository.findByEmail(createUserDto.email);
 
     if (user) throw new ConflictException();
 
     const password = await bcrypt.hash(createUserDto.password, this.auth.salt);
 
     const id = await this.usersRepository.create({
-      username: createUserDto.username,
+      email: createUserDto.email,
       password,
     });
 

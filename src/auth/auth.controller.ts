@@ -11,21 +11,26 @@ import {
 import { LocalAuthGuard } from './local-auth.guard';
 import { AuthService } from './auth.service';
 import { User } from 'src/users/entities/user.entity';
-import { ApiBody, OmitType } from '@nestjs/swagger';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { ApiBody } from '@nestjs/swagger';
+import { CreateUserDto } from 'src/auth/dto/create-user.dto';
 import { Public } from './public-route.decorator';
+import { LoginUserDTO } from './dto/login-user.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Public()
+  @UsePipes(new ValidationPipe())
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @ApiBody({
-    type: OmitType<User, 'id'>,
+    type: LoginUserDTO,
   })
-  login(@Req() req: Request & { user: User['id'] }) {
+  login(
+    @Body() loginUserDO: LoginUserDTO,
+    @Req() req: Request & { user: User['id'] },
+  ) {
     if (!req.user) throw new UnauthorizedException();
 
     return this.authService.login(req.user);
