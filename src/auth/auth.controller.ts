@@ -2,19 +2,18 @@ import {
   Body,
   Controller,
   Post,
-  Req,
-  UnauthorizedException,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { LocalAuthGuard } from './local-auth.guard';
 import { AuthService } from './auth.service';
-import { User } from 'src/users/entities/user.entity';
 import { ApiBody } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/auth/dto/create-user.dto';
 import { Public } from './public-route.decorator';
 import { LoginUserDTO } from './dto/login-user.dto';
+import { ReqUser } from './decorators/request-user.decorator';
+import { RequestUserDto } from './dto/request-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -27,13 +26,8 @@ export class AuthController {
   @ApiBody({
     type: LoginUserDTO,
   })
-  login(
-    @Body() loginUserDO: LoginUserDTO,
-    @Req() req: Request & { user: User['id'] },
-  ) {
-    if (!req.user) throw new UnauthorizedException();
-
-    return this.authService.login(req.user);
+  login(@Body() loginUserDO: LoginUserDTO, @ReqUser() user: RequestUserDto) {
+    return this.authService.login(user.id);
   }
 
   @Public()

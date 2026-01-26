@@ -7,9 +7,10 @@ import { ConfigModule } from './const/config.module';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
-  imports: [ConfigModule, DatabaseModule, UsersModule, AuthModule],
+  imports: [ConfigModule, DatabaseModule, UsersModule, AuthModule, NotificationsModule],
   controllers: [AppController],
   providers: [
     AppService,

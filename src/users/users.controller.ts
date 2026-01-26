@@ -3,6 +3,8 @@ import { UsersService } from './users.service';
 import type { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { ReqUser } from 'src/auth/decorators/request-user.decorator';
+import { RequestUserDto } from 'src/auth/dto/request-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -11,7 +13,7 @@ export class UsersController {
   @Get('/me')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  me(@Req() request: Request) {
-    return this.usersService.findOne(request.user as string);
+  me(@ReqUser() user: RequestUserDto) {
+    return this.usersService.findOne(user.id);
   }
 }
