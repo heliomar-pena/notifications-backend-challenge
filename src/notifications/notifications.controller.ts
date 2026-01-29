@@ -20,11 +20,17 @@ import { UpdateNotificationDTO } from './dto/update-notification.dto';
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
+  @Get('')
+  @ApiBearerAuth()
+  getMyNotifications(@ReqUser() user: RequestUserDto) {
+    return this.notificationsService.myNotifications(user.id);
+  }
+
   @Post()
   @ApiBearerAuth()
   @UsePipes(new ValidationPipe())
   createNotification(
-    @Body() createNotificationDto: CreateNotificationDto,
+    @Body() createNotificationDto: Omit<CreateNotificationDto, 'userId'>,
     @ReqUser() user: RequestUserDto,
   ) {
     return this.notificationsService.createNotification(
@@ -50,9 +56,13 @@ export class NotificationsController {
 
   @Delete('/:id')
   @ApiBearerAuth()
-  deleteNotification() {}
-
-  @Get('/my-notifications')
-  @ApiBearerAuth()
-  getMyNotifications() {}
+  deleteNotification(
+    @ReqUser() user: RequestUserDto,
+    @Param('id') notificationId: string,
+  ) {
+    return this.notificationsService.deleteNotification(
+      user.id,
+      notificationId,
+    );
+  }
 }

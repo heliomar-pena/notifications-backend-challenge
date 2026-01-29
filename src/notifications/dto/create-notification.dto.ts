@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum } from 'class-validator';
-import { ChannelValues } from 'src/enums/channel.enum';
+import { Channel } from 'src/enums/channel.enum';
 
 export class CreateNotificationDto {
   @ApiProperty()
@@ -10,6 +10,6 @@ export class CreateNotificationDto {
   content: string;
 
   @ApiProperty()
-  @IsEnum(ChannelValues)
+  @IsEnum(Channel)
   channel: string;
 }

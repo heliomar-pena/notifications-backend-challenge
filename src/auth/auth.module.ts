@@ -16,7 +16,7 @@ import { JwtStrategy } from './jwt.strategy';
       imports: [ConfigModule.forFeature(authConfig)],
       useFactory: (configuration: ConfigType<typeof authConfig>) => ({
         secret: configuration.jwtSecret,
-        signOptions: { expiresIn: '60s' },
+        signOptions: { expiresIn: '30min' },
       }),
       inject: [authConfig.KEY],
     }),

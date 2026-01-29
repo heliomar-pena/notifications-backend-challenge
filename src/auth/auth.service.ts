@@ -24,7 +24,7 @@ export class AuthService {
   async validateUser(
     email: string,
     pass: string,
-  ): Promise<Omit<User, 'password'> | null> {
+  ): Promise<Pick<User, 'email' | 'id'> | null> {
     const user = await this.usersRepository.findByEmail(email);
 
     if (!user) return null;

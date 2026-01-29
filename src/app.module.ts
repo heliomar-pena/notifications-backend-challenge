@@ -3,14 +3,24 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { DatabaseModule } from './database/database.module';
-import { ConfigModule } from './const/config.module';
+import { ConfigModule } from './config/config.module';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { NotificationsModule } from './notifications/notifications.module';
+import { EmailTemplatesModule } from './email-templates/email-templates.module';
+import { ClientsModule } from './clients/clients.module';
 
 @Module({
-  imports: [ConfigModule, DatabaseModule, UsersModule, AuthModule, NotificationsModule],
+  imports: [
+    ConfigModule,
+    DatabaseModule,
+    UsersModule,
+    AuthModule,
+    NotificationsModule,
+    EmailTemplatesModule,
+    ClientsModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,
