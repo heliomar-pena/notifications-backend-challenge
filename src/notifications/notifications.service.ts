@@ -48,8 +48,20 @@ export class NotificationsService {
     return strategy.edit(userId, notificationId, updateNotificationDto);
   }
 
-  deleteNotification(userId: User['id'], notificationId: Notification['id']) {
-    return this.notificationsRepository.delete(userId, notificationId);
+  async deleteNotification(
+    userId: User['id'],
+    notificationId: Notification['id'],
+  ) {
+    const notification = await this.notificationsRepository.userNotification(
+      userId,
+      notificationId,
+    );
+
+    if (!notification) throw new NotFoundException();
+
+    const strategy = this.notificationFactory.getStrategy(notification.channel);
+
+    return strategy.delete(userId, notification.id);
   }
 
   async getDetailedNotification(
