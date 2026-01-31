@@ -10,6 +10,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { NotificationsModule } from './notifications/notifications.module';
 import { EmailTemplatesModule } from './email-templates/email-templates.module';
 import { ClientsModule } from './clients/clients.module';
+import { EmailNotificationsModule } from './email-notifications/email-notifications.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ClientsModule } from './clients/clients.module';
     NotificationsModule,
     EmailTemplatesModule,
     ClientsModule,
+    EmailNotificationsModule,
   ],
   controllers: [AppController],
   providers: [

@@ -7,7 +7,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { EmailNotifications } from './email-notifications.entity';
+import { EmailNotifications } from '../../email-notifications/entities/email-notifications.entity';
 
 @Entity()
 export class EmailTemplates {

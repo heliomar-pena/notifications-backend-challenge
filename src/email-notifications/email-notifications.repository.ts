@@ -1,0 +1,147 @@
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { EmailNotifications } from './entities/email-notifications.entity';
+import { Repository } from 'typeorm';
+import { CreateEmailNotificationDto } from './dto/create-email-notification';
+import { Notification } from 'src/notifications/entities/notification.entity';
+import { User } from 'src/users/entities/user.entity';
+import { UpdateEmailNotificationDTO } from './dto/update-email-notification.dto';
+import { EmailTemplates } from 'src/email-templates/entities/email-templates.entity';
+
+@Injectable()
+export class EmailNotificationsRepository {
+  constructor(
+    @InjectRepository(EmailNotifications)
+    private emailNotificationsRepository: Repository<EmailNotifications>,
+  ) {}
+
+  async createEmailNotification(
+    userId: string,
+    createEmailNotificationDto: Omit<
+      CreateEmailNotificationDto,
+      'notification_id'
+    >,
+    template: EmailTemplates,
+  ): Promise<{
+    id: Notification['id'];
+  }> {
+    return await this.emailNotificationsRepository.manager.transaction(
+      async (manager) => {
+        const emailNotification = manager
+          .getRepository(EmailNotifications)
+          .create({
+            template: template,
+            variables: createEmailNotificationDto.variables,
+          });
+        const notification = manager.getRepository(Notification).create({
+          channel: createEmailNotificationDto.channel,
+          content: createEmailNotificationDto.content,
+          title: createEmailNotificationDto.title,
+          destinations: createEmailNotificationDto.destinations,
+          user: { id: userId },
+        });
+
+        const resultNotification = await manager.save(notification);
+
+        emailNotification.notification = resultNotification;
+
+        console.log({ resultNotification });
+
+        const result = await manager.save(emailNotification);
+
+        return {
+          id: result.notification.id,
+        };
+      },
+    );
+  }
+
+  async updateEmailNotification(
+    userId: User['id'],
+    notificationId: Notification['id'],
+    updateEmailNotificationDto: UpdateEmailNotificationDTO,
+  ): Promise<number> {
+    return await this.emailNotificationsRepository.manager.transaction(
+      async (manager) => {
+        const resultNotification = await manager
+          .getRepository(Notification)
+          .update(
+            { id: notificationId, user: { id: userId } },
+            {
+              channel: updateEmailNotificationDto.channel,
+              content: updateEmailNotificationDto.content,
+              destinations: updateEmailNotificationDto.destinations,
+              title: updateEmailNotificationDto.title,
+            },
+          );
+
+        const resultEmailNotification = await manager
+          .getRepository(EmailNotifications)
+          .update(
+            { notification: { id: notificationId, user: { id: userId } } },
+            {
+              variables: updateEmailNotificationDto.variables,
+              ...(updateEmailNotificationDto.template_id && {
+                template: { id: updateEmailNotificationDto.template_id },
+              }),
+            },
+          );
+
+        if (!resultEmailNotification.affected || !resultNotification.affected)
+          throw new NotFoundException('Notification not found');
+
+        if (resultEmailNotification.affected !== resultNotification.affected)
+          throw new InternalServerErrorException(
+            'Error while updating notification',
+          );
+
+        return resultEmailNotification.affected + resultNotification.affected;
+      },
+    );
+  }
+
+  async deleteEmailNotification(
+    userId: User['id'],
+    notificationId: Notification['id'],
+  ) {
+    return await this.emailNotificationsRepository.manager.transaction(
+      async (manager) => {
+        const resultEmailNotification = await manager
+          .getRepository(EmailNotifications)
+          .softDelete({
+            notification: { id: notificationId, user: { id: userId } },
+          });
+
+        const resultNotification = await manager
+          .getRepository(Notification)
+          .softDelete({
+            id: notificationId,
+            user: { id: userId },
+          });
+
+        if (
+          resultEmailNotification.affected !== 1 ||
+          resultNotification.affected !== 1
+        )
+          throw new InternalServerErrorException(
+            'Error deleting the notification.',
+          );
+
+        return resultEmailNotification.affected + resultNotification.affected;
+      },
+    );
+  }
+
+  async getUserEmailNotification(
+    userId: User['id'],
+    notificationId: Notification['id'],
+  ) {
+    return await this.emailNotificationsRepository.findOne({
+      where: { notification: { user: { id: userId }, id: notificationId } },
+    });
+  }
+}

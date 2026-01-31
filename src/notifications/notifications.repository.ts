@@ -37,7 +37,7 @@ export class NotificationsRepository {
   }
 
   delete(userId: User['id'], notificationId: Notification['id']) {
-    return this.notificationsRepository.delete({
+    return this.notificationsRepository.softDelete({
       user: { id: userId },
       id: notificationId,
     });

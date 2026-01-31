@@ -17,7 +17,7 @@ export class EmailTemplatesService {
   }
 
   async getUserTemplates(userId: string) {
-    return this.emailTemplatesRepository.getUserTemplates(userId);
+    return this.emailTemplatesRepository.getUserDetailedTemplates(userId);
   }
 
   async updateTemplate(

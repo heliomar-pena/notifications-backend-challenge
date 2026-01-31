@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum } from 'class-validator';
+import { IsArray, IsEnum } from 'class-validator';
 import { Channel } from 'src/enums/channel.enum';
+import type { ChannelValuesType } from 'src/enums/channel.enum';
 
 export class CreateNotificationDto {
   @ApiProperty()
@@ -11,5 +12,9 @@ export class CreateNotificationDto {
 
   @ApiProperty()
   @IsEnum(Channel)
-  channel: string;
+  channel: ChannelValuesType;
+
+  @ApiProperty()
+  @IsArray()
+  destinations: string[];
 }

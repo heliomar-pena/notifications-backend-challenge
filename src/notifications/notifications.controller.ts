@@ -9,12 +9,20 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiExtraModels,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { ReqUser } from 'src/auth/decorators/request-user.decorator';
 import { RequestUserDto } from 'src/auth/dto/request-user.dto';
 import { NotificationsService } from './notifications.service';
 import { UpdateNotificationDTO } from './dto/update-notification.dto';
+import { CreateEmailNotificationDto } from 'src/email-notifications/dto/create-email-notification';
+import { Channel } from 'src/enums/channel.enum';
+import { ChannelValidationPipe } from './pipes/channel-validation.pipe';
 
 @Controller('notifications')
 export class NotificationsController {
@@ -26,11 +34,52 @@ export class NotificationsController {
     return this.notificationsService.myNotifications(user.id);
   }
 
+  @ApiExtraModels(CreateEmailNotificationDto, CreateNotificationDto)
   @Post()
   @ApiBearerAuth()
+  @ApiBody({
+    schema: {
+      oneOf: [
+        {
+          $ref: getSchemaPath(CreateNotificationDto),
+        },
+        {
+          $ref: getSchemaPath(CreateEmailNotificationDto),
+        },
+      ],
+      discriminator: {
+        propertyName: 'channel',
+        mapping: {
+          [Channel.EMAIL]: getSchemaPath(CreateEmailNotificationDto),
+          [Channel.SMS]: getSchemaPath(CreateNotificationDto),
+          [Channel.PUSH]: getSchemaPath(CreateNotificationDto),
+        },
+      },
+      examples: {
+        emailExample: {
+          value: {
+            channel: 'email',
+            email: 'user@example.com',
+            subject: 'Welcome!',
+            message: 'Welcome to our service!',
+          },
+        },
+        smsExample: {
+          value: {
+            channel: 'sms',
+            phoneNumber: '+1234567890',
+            message: 'Your verification code is 12345.',
+          },
+        },
+      },
+    },
+  })
   @UsePipes(new ValidationPipe())
   createNotification(
-    @Body() createNotificationDto: Omit<CreateNotificationDto, 'userId'>,
+    @Body(new ChannelValidationPipe())
+    createNotificationDto:
+      | CreateEmailNotificationDto
+      | (Omit<CreateNotificationDto, 'channel'> & { channel: 'sms' | 'push' }),
     @ReqUser() user: RequestUserDto,
   ) {
     return this.notificationsService.createNotification(

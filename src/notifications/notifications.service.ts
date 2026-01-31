@@ -4,18 +4,27 @@ import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDTO } from './dto/update-notification.dto';
 import { Notification } from './entities/notification.entity';
 import { NotificationsRepository } from './notifications.repository';
+import { NotificationFactory } from './strategies/notification-factory.service';
+import { CreateEmailNotificationDto } from 'src/email-notifications/dto/create-email-notification';
 
 @Injectable()
 export class NotificationsService {
   constructor(
     private readonly notificationsRepository: NotificationsRepository,
+    private readonly notificationFactory: NotificationFactory,
   ) {}
 
   createNotification(
     userId: User['id'],
-    createNotificationDto: CreateNotificationDto,
+    createNotificationDto:
+      | (Omit<CreateNotificationDto, 'channel'> & { channel: 'sms' | 'push' })
+      | CreateEmailNotificationDto,
   ) {
-    return this.notificationsRepository.create(userId, createNotificationDto);
+    const { strategy, typedDto } = this.notificationFactory.getStrategy(
+      createNotificationDto,
+    );
+
+    return strategy.create(userId, typedDto);
   }
 
   editNotification(

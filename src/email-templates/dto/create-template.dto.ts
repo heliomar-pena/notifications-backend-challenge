@@ -6,8 +6,12 @@ import {
   ValidateNested,
   IsIn,
 } from 'class-validator';
+import { TemplateVariable } from 'resend';
 
-export class TemplateVariableDto {
+export class TemplateVariableDto implements Omit<
+  TemplateVariable,
+  'created_at' | 'updated_at'
+> {
   @ApiProperty({
     example: 'firstName',
     description: 'Variable key',
