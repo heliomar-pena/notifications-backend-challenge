@@ -11,9 +11,13 @@ import { EmailTemplatesRepository } from 'src/email-templates/email-templates.re
 import { CreateEmailNotificationDto } from 'src/email-notifications/dto/create-email-notification';
 import { EmailNotificationsRepository } from 'src/email-notifications/email-notifications.repository';
 import { EmailTemplates } from 'src/email-templates/entities/email-templates.entity';
+import { EmailNotifications } from 'src/email-notifications/entities/email-notifications.entity';
+import { validateClass } from 'src/utils/validate-class';
+
+type DetailedNotification = Partial<EmailNotifications & Notification>;
 
 @Injectable()
-export class EmailStrategy implements NotificationStrategy {
+export class EmailStrategy implements NotificationStrategy<DetailedNotification> {
   constructor(
     private readonly emailTemplatesRepository: EmailTemplatesRepository,
     private readonly emailNotificationsRepository: EmailNotificationsRepository,
@@ -39,17 +43,22 @@ export class EmailStrategy implements NotificationStrategy {
 
   async create(
     userId: User['id'],
-    createNotificationDto: Omit<CreateEmailNotificationDto, 'notification_id'>,
+    createNotificationDto: CreateEmailNotificationDto,
   ) {
+    const createEmailNotificationDto = await validateClass(
+      CreateEmailNotificationDto,
+      createNotificationDto,
+    );
+
     const template = await this.#getUserTemplateOrFail(
       userId,
-      createNotificationDto.template_id,
+      createEmailNotificationDto.template_id!,
     );
 
     const result =
       await this.emailNotificationsRepository.createEmailNotification(
         userId,
-        createNotificationDto,
+        createEmailNotificationDto,
         template,
       );
 
@@ -67,10 +76,15 @@ export class EmailStrategy implements NotificationStrategy {
     notificationId: Notification['id'],
     updateNotificationDto: UpdateEmailNotificationDTO,
   ) {
-    if (updateNotificationDto.template_id) {
+    const updateEmailNotificationDto = await validateClass(
+      UpdateEmailNotificationDTO,
+      updateNotificationDto,
+    );
+
+    if (updateEmailNotificationDto.template_id) {
       await this.#getUserTemplateOrFail(
         userId,
-        updateNotificationDto.template_id,
+        updateEmailNotificationDto.template_id,
       );
     }
 
@@ -78,7 +92,7 @@ export class EmailStrategy implements NotificationStrategy {
       await this.emailNotificationsRepository.updateEmailNotification(
         userId,
         notificationId,
-        updateNotificationDto,
+        updateEmailNotificationDto,
       );
 
     if (!affectedRows) {
@@ -95,13 +109,19 @@ export class EmailStrategy implements NotificationStrategy {
     );
   }
 
-  async getNotification(
-    userId: User['id'],
-    notificationId: Notification['id'],
-  ) {
-    return await this.emailNotificationsRepository.getUserEmailNotification(
-      userId,
-      notificationId,
-    );
+  async getDetailedNotification(
+    userId: string,
+    notification: Notification,
+  ): Promise<DetailedNotification> {
+    const emailNotification =
+      await this.emailNotificationsRepository.getUserEmailNotification(
+        userId,
+        notification.id,
+      );
+
+    return {
+      ...notification,
+      ...emailNotification,
+    };
   }
 }

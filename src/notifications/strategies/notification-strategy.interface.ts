@@ -3,7 +3,9 @@ import { CreateNotificationDto } from '../dto/create-notification.dto';
 import { UpdateNotificationDTO } from '../dto/update-notification.dto';
 import { Notification } from '../entities/notification.entity';
 
-export interface NotificationStrategy {
+export interface NotificationStrategy<
+  DetailedNotification extends Partial<Notification>,
+> {
   create(
     userId: User['id'],
     createNotificationDto: CreateNotificationDto,
@@ -16,4 +18,9 @@ export interface NotificationStrategy {
   ): Promise<{ id: Notification['id'] }>;
 
   delete(userId: User['id'], notificationId: Notification['id']): Promise<void>;
+
+  getDetailedNotification(
+    userId: User['id'],
+    notification: Notification,
+  ): Promise<DetailedNotification>;
 }

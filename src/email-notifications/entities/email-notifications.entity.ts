@@ -9,7 +9,6 @@ import {
 } from 'typeorm';
 import { Notification } from '../../notifications/entities/notification.entity';
 import { EmailTemplates } from '../../email-templates/entities/email-templates.entity';
-import { TemplateVariable } from 'resend';
 
 @Entity()
 export class EmailNotifications {
@@ -17,7 +16,7 @@ export class EmailNotifications {
   id: string;
 
   @Column({ type: 'json', nullable: true })
-  variables: TemplateVariable[];
+  variables: Record<string, string | number>;
 
   @OneToOne(() => Notification)
   @JoinColumn()

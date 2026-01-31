@@ -1,24 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { EmailStrategy } from './email.strategy';
-import { CreateNotificationDto } from '../dto/create-notification.dto';
-import { CreateEmailNotificationDto } from 'src/email-notifications/dto/create-email-notification';
+import { ChannelValuesType } from 'src/enums/channel.enum';
 
 @Injectable()
 export class NotificationFactory {
   constructor(private readonly emailStrategy: EmailStrategy) {}
 
-  getStrategy(
-    dto:
-      | CreateEmailNotificationDto
-      | (Omit<CreateNotificationDto, 'channel'> & { channel: 'sms' | 'push' }),
-  ) {
-    switch (dto.channel) {
+  getStrategy(channel: ChannelValuesType) {
+    switch (channel) {
       case 'email':
-        return { strategy: this.emailStrategy, typedDto: dto };
+        return this.emailStrategy;
       case 'push':
       case 'sms':
       default:
-        throw new Error(`Unsupported notification channel: ${dto.channel}`);
+        throw new Error(`Unsupported notification channel: ${channel}`);
     }
   }
 }

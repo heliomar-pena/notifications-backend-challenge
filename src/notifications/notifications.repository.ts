@@ -46,4 +46,13 @@ export class NotificationsRepository {
   userNotifications(userId: User['id']) {
     return this.notificationsRepository.findBy({ user: { id: userId } });
   }
+
+  userNotification(
+    userId: User['id'],
+    notificationId: Notification['id'],
+  ): Promise<Notification | null> {
+    return this.notificationsRepository.findOne({
+      where: { user: { id: userId }, id: notificationId },
+    });
+  }
 }

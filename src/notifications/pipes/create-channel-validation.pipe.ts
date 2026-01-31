@@ -2,11 +2,10 @@ import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { Channel } from 'src/enums/channel.enum';
 import { CreateNotificationDto } from '../dto/create-notification.dto';
 import { CreateEmailNotificationDto } from 'src/email-notifications/dto/create-email-notification';
-import { plainToInstance } from 'class-transformer';
-import { validate, ValidationError } from 'class-validator';
+import { validateClass } from 'src/utils/validate-class';
 
 @Injectable()
-export class ChannelValidationPipe implements PipeTransform {
+export class CreateChannelValidationPipe implements PipeTransform {
   async transform(
     value:
       | CreateEmailNotificationDto
@@ -26,23 +25,6 @@ export class ChannelValidationPipe implements PipeTransform {
         throw new BadRequestException('Invalid channel type');
     }
 
-    const dto = plainToInstance(dtoClass, value);
-
-    const errors = await validate(dto);
-    if (errors.length > 0) {
-      throw new BadRequestException(this.#formatErrors(errors));
-    }
-
-    return dto;
-  }
-
-  #formatErrors(errors: ValidationError[]): string[] {
-    return errors.map((error) => {
-      const constraints = error.constraints;
-      if (constraints) {
-        return Object.values(constraints).join(', ');
-      }
-      return '';
-    });
+    return await validateClass(dtoClass, value);
   }
 }

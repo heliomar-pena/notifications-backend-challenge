@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmailNotifications } from './entities/email-notifications.entity';
 import { Repository } from 'typeorm';
@@ -67,39 +63,48 @@ export class EmailNotificationsRepository {
   ): Promise<number> {
     return await this.emailNotificationsRepository.manager.transaction(
       async (manager) => {
-        const resultNotification = await manager
-          .getRepository(Notification)
-          .update(
-            { id: notificationId, user: { id: userId } },
-            {
-              channel: updateEmailNotificationDto.channel,
-              content: updateEmailNotificationDto.content,
-              destinations: updateEmailNotificationDto.destinations,
-              title: updateEmailNotificationDto.title,
-            },
-          );
+        const { content, template_id, variables, destinations, title } =
+          updateEmailNotificationDto;
 
-        const resultEmailNotification = await manager
-          .getRepository(EmailNotifications)
-          .update(
-            { notification: { id: notificationId, user: { id: userId } } },
-            {
-              variables: updateEmailNotificationDto.variables,
-              ...(updateEmailNotificationDto.template_id && {
-                template: { id: updateEmailNotificationDto.template_id },
-              }),
-            },
-          );
+        const hasUpdatedNotification = content || destinations || title;
+        const hasUpdatedEmailNotification = template_id || variables;
 
-        if (!resultEmailNotification.affected || !resultNotification.affected)
-          throw new NotFoundException('Notification not found');
+        if (!hasUpdatedEmailNotification && !hasUpdatedEmailNotification)
+          return 0;
 
-        if (resultEmailNotification.affected !== resultNotification.affected)
-          throw new InternalServerErrorException(
-            'Error while updating notification',
-          );
+        let resultNotificationAffected = 0;
+        let resultEmailNotificationAffected = 0;
 
-        return resultEmailNotification.affected + resultNotification.affected;
+        if (hasUpdatedNotification) {
+          resultNotificationAffected = await manager
+            .getRepository(Notification)
+            .update(
+              { id: notificationId, user: { id: userId } },
+              {
+                content: updateEmailNotificationDto.content,
+                destinations: updateEmailNotificationDto.destinations,
+                title: updateEmailNotificationDto.title,
+              },
+            )
+            .then((result) => result.affected ?? 0);
+        }
+
+        if (hasUpdatedEmailNotification) {
+          resultEmailNotificationAffected = await manager
+            .getRepository(EmailNotifications)
+            .update(
+              { notification: { id: notificationId, user: { id: userId } } },
+              {
+                variables: updateEmailNotificationDto.variables,
+                ...(updateEmailNotificationDto.template_id && {
+                  template: { id: updateEmailNotificationDto.template_id },
+                }),
+              },
+            )
+            .then((result) => result.affected ?? 0);
+        }
+
+        return resultEmailNotificationAffected + resultNotificationAffected;
       },
     );
   }

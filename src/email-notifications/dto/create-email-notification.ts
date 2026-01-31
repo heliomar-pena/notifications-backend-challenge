@@ -1,36 +1,29 @@
 import { CreateNotificationDto } from 'src/notifications/dto/create-notification.dto';
 import {
-  IsEnum,
+  IsArray,
+  IsEmail,
   IsNotEmpty,
   IsObject,
   IsOptional,
   IsUUID,
+  Validate,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  CreateTemplateDto,
-  TemplateVariableDto,
-} from 'src/email-templates/dto/create-template.dto';
-import { Channel } from 'src/enums/channel.enum';
+import { IsEmailNotificationVariable } from '../decorators/is-email-notification-variable.decorator';
 
 export class CreateEmailNotificationDto extends CreateNotificationDto {
-  @IsEnum([Channel.EMAIL])
-  @ApiProperty({
-    example: Channel.EMAIL,
-  })
-  declare channel: typeof Channel.EMAIL;
+  @IsArray()
+  @IsEmail({}, { each: true })
+  declare destinations: string[];
 
   @IsObject()
+  @Validate(IsEmailNotificationVariable)
   @IsOptional()
-  @ApiProperty({
-    type: TemplateVariableDto,
-    isArray: true,
-    description: 'Template variables',
-  })
-  variables: CreateTemplateDto['variables'];
+  @ApiProperty()
+  variables?: Record<string, string | number>;
 
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  template_id: string;
+  template_id?: string;
 }
