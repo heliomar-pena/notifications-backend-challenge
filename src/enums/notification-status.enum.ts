@@ -1,10 +1,10 @@
 export const NotificationStatus = {
   CREATED: 'created',
   SENT: 'sent',
-  DELIVERED: 'delivered',
-};
+} as const;
 
 export const NotificationStatusValues = Object.values(NotificationStatus);
 
+export type NotificationsKeyType = keyof typeof NotificationStatus;
 export type NotificationStatusType =
-  (typeof NotificationStatus)[keyof typeof NotificationStatus];
+  (typeof NotificationStatus)[NotificationsKeyType];

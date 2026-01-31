@@ -35,4 +35,8 @@ export class EmailTemplatesService {
   async deleteTemplate(templateId: string, userId: string) {
     return this.emailTemplatesRepository.deleteTemplate(userId, templateId);
   }
+
+  async publishTemplate(templateId: string, userId: string) {
+    return this.emailTemplatesRepository.publishTemplate(userId, templateId);
+  }
 }

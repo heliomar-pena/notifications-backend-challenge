@@ -99,4 +99,18 @@ export class EmailTemplatesRepository {
 
     return clientResult;
   }
+
+  async publishTemplate(userId: string, templateId: string) {
+    const template = await this.getUserTemplate(userId, templateId);
+
+    if (!template) {
+      throw new NotFoundException();
+    }
+
+    const clientResult = await this.emailClient.publishTemplate(
+      template.template_id,
+    );
+
+    return clientResult;
+  }
 }

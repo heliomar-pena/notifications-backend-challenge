@@ -122,6 +122,30 @@ export class EmailStrategy implements NotificationStrategy<DetailedNotification>
     return {
       ...notification,
       ...emailNotification,
+      id: notification.id,
     };
+  }
+
+  async send(
+    userId: User['id'],
+    notification: Notification,
+  ): Promise<{ referenceId: string }> {
+    const emailNotification =
+      await this.emailNotificationsRepository.getUserEmailNotification(
+        userId,
+        notification.id,
+      );
+
+    if (!emailNotification) throw new NotFoundException();
+
+    const referenceId = await this.emailNotificationsRepository.send(
+      notification,
+      emailNotification,
+    );
+
+    if (!referenceId)
+      throw new InternalServerErrorException('Failed to send notification');
+
+    return { referenceId: referenceId };
   }
 }

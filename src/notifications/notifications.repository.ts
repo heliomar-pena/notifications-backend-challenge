@@ -25,6 +25,20 @@ export class NotificationsRepository {
     return result.identifiers[0].id as Notification['id'];
   }
 
+  updateNotification(
+    userId: User['id'],
+    notificationId: Notification['id'],
+    newNotification: Partial<Notification>,
+  ) {
+    return this.notificationsRepository.update(
+      {
+        user: { id: userId },
+        id: notificationId,
+      },
+      newNotification,
+    );
+  }
+
   edit(
     userId: User['id'],
     notificationId: Notification['id'],

@@ -63,4 +63,14 @@ export class EmailTemplatesController {
   ) {
     return this.emailTemplatesService.deleteTemplate(emailTemplateId, user.id);
   }
+
+  @Post('/publish/:id')
+  @ApiBearerAuth()
+  @UsePipes(new ValidationPipe())
+  publishEmailTemplate(
+    @Param('id') emailTemplateId: string,
+    @ReqUser() user: RequestUserDto,
+  ) {
+    return this.emailTemplatesService.publishTemplate(emailTemplateId, user.id);
+  }
 }

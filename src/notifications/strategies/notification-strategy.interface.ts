@@ -23,4 +23,9 @@ export interface NotificationStrategy<
     userId: User['id'],
     notification: Notification,
   ): Promise<DetailedNotification>;
+
+  send(
+    userId: User['id'],
+    notification: Notification,
+  ): Promise<{ referenceId: string }>;
 }

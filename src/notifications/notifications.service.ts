@@ -1,12 +1,18 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { User } from 'src/users/entities/user.entity';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDTO } from './dto/update-notification.dto';
 import { Notification } from './entities/notification.entity';
 import { NotificationsRepository } from './notifications.repository';
 import { NotificationFactory } from './strategies/notification-factory.service';
-import { CreateEmailNotificationDto } from 'src/email-notifications/dto/create-email-notification';
-import { UpdateEmailNotificationDTO } from 'src/email-notifications/dto/update-email-notification.dto';
+import {
+  NotificationStatus,
+  NotificationStatusType,
+} from 'src/enums/notification-status.enum';
 
 @Injectable()
 export class NotificationsService {
@@ -15,11 +21,41 @@ export class NotificationsService {
     private readonly notificationFactory: NotificationFactory,
   ) {}
 
+  async #getNotificationOrThrow(
+    userId: string,
+    notificationId: string,
+  ): Promise<Notification> {
+    const notification = await this.notificationsRepository.userNotification(
+      userId,
+      notificationId,
+    );
+
+    if (!notification) throw new NotFoundException();
+
+    return notification;
+  }
+
+  async #getNotificationAndValidateStatus(
+    userId: string,
+    notificationId: string,
+    invalidStatus: NotificationStatusType[] = [NotificationStatus.SENT],
+  ): Promise<Notification> {
+    const notification = await this.#getNotificationOrThrow(
+      userId,
+      notificationId,
+    );
+
+    if (invalidStatus.includes(notification.status))
+      throw new ConflictException(
+        `Invalid notifications status: ${notification.status}`,
+      );
+
+    return notification;
+  }
+
   createNotification(
     userId: User['id'],
-    createNotificationDto:
-      | (Omit<CreateNotificationDto, 'channel'> & { channel: 'sms' | 'push' })
-      | CreateEmailNotificationDto,
+    createNotificationDto: CreateNotificationDto,
   ) {
     const strategy = this.notificationFactory.getStrategy(
       createNotificationDto.channel,
@@ -31,17 +67,12 @@ export class NotificationsService {
   async editNotification(
     userId: User['id'],
     notificationId: Notification['id'],
-    updateNotificationDto: Omit<
-      UpdateEmailNotificationDTO | UpdateNotificationDTO,
-      'channel'
-    >,
+    updateNotificationDto: UpdateNotificationDTO,
   ) {
-    const notification = await this.notificationsRepository.userNotification(
+    const notification = await this.#getNotificationAndValidateStatus(
       userId,
       notificationId,
     );
-
-    if (!notification) throw new NotFoundException();
 
     const strategy = this.notificationFactory.getStrategy(notification.channel);
 
@@ -52,12 +83,10 @@ export class NotificationsService {
     userId: User['id'],
     notificationId: Notification['id'],
   ) {
-    const notification = await this.notificationsRepository.userNotification(
+    const notification = await this.#getNotificationAndValidateStatus(
       userId,
       notificationId,
     );
-
-    if (!notification) throw new NotFoundException();
 
     const strategy = this.notificationFactory.getStrategy(notification.channel);
 
@@ -82,5 +111,28 @@ export class NotificationsService {
 
   myNotifications(userId: User['id']) {
     return this.notificationsRepository.userNotifications(userId);
+  }
+
+  async sendNotification(
+    userId: User['id'],
+    notificationId: Notification['id'],
+  ) {
+    const notification = await this.#getNotificationAndValidateStatus(
+      userId,
+      notificationId,
+    );
+
+    const strategy = this.notificationFactory.getStrategy(notification.channel);
+
+    const { referenceId } = await strategy.send(userId, notification);
+
+    await this.notificationsRepository.updateNotification(
+      userId,
+      notification.id,
+      {
+        status: NotificationStatus.SENT,
+        reference_id: referenceId,
+      },
+    );
   }
 }

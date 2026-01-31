@@ -11,6 +11,7 @@ import {
   NotificationStatus,
   NotificationStatusValues,
 } from 'src/enums/notification-status.enum';
+import type { NotificationStatusType } from 'src/enums/notification-status.enum';
 import type { ChannelValuesType } from '../../enums/channel.enum';
 
 @Entity()
@@ -27,13 +28,16 @@ export class Notification {
   @Column({ type: 'enum', enum: ChannelValues, nullable: false })
   channel: ChannelValuesType;
 
+  @Column({ unique: true, nullable: true })
+  reference_id: string;
+
   @Column({
     type: 'enum',
     enum: NotificationStatusValues,
     nullable: false,
     default: NotificationStatus.CREATED,
   })
-  status: string;
+  status: NotificationStatusType;
 
   @Column({ type: 'simple-array', nullable: false })
   destinations: string[];

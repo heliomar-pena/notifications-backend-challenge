@@ -5,6 +5,9 @@ import type { ConfigType } from '@nestjs/config';
 import emailConfig from './email.config';
 import { EmailClientError } from './email.error';
 import { UpdateTemplateDto } from 'src/email-templates/dto/update-template.dto';
+import { EmailTemplates } from 'src/email-templates/entities/email-templates.entity';
+import { EmailNotifications } from 'src/email-notifications/entities/email-notifications.entity';
+import { Notification } from 'src/notifications/entities/notification.entity';
 
 @Injectable()
 export class EmailClient {
@@ -15,6 +18,29 @@ export class EmailClient {
     private emailEnvs: ConfigType<typeof emailConfig>,
   ) {
     this.resend = new Resend(emailEnvs.apiKey);
+  }
+
+  async sendEmail(
+    subject: string,
+    to: Notification['destinations'],
+    templateId: EmailTemplates['template_id'],
+    variables: EmailNotifications['variables'],
+  ) {
+    const result = await this.resend.emails.send({
+      subject,
+      from: this.emailEnvs.fromEmail,
+      to,
+      template: {
+        id: templateId,
+        variables: variables,
+      },
+    });
+
+    if (result.error) {
+      throw new EmailClientError(result.error);
+    }
+
+    return result.data.id;
   }
 
   async createTemplate(createTemplateDto: CreateTemplateDto) {
@@ -59,6 +85,16 @@ export class EmailClient {
 
   async deleteTemplate(templateId: string) {
     const result = await this.resend.templates.remove(templateId);
+
+    if (result.error) {
+      throw new EmailClientError(result.error);
+    }
+
+    return result.data;
+  }
+
+  async publishTemplate(templateId: string) {
+    const result = await this.resend.templates.publish(templateId);
 
     if (result.error) {
       throw new EmailClientError(result.error);

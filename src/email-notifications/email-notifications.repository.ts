@@ -7,20 +7,19 @@ import { Notification } from 'src/notifications/entities/notification.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UpdateEmailNotificationDTO } from './dto/update-email-notification.dto';
 import { EmailTemplates } from 'src/email-templates/entities/email-templates.entity';
+import { EmailClient } from 'src/clients/email.client';
 
 @Injectable()
 export class EmailNotificationsRepository {
   constructor(
     @InjectRepository(EmailNotifications)
     private emailNotificationsRepository: Repository<EmailNotifications>,
+    private emailClient: EmailClient,
   ) {}
 
   async createEmailNotification(
     userId: string,
-    createEmailNotificationDto: Omit<
-      CreateEmailNotificationDto,
-      'notification_id'
-    >,
+    createEmailNotificationDto: CreateEmailNotificationDto,
     template: EmailTemplates,
   ): Promise<{
     id: Notification['id'];
@@ -45,8 +44,6 @@ export class EmailNotificationsRepository {
 
         emailNotification.notification = resultNotification;
 
-        console.log({ resultNotification });
-
         const result = await manager.save(emailNotification);
 
         return {
@@ -66,11 +63,10 @@ export class EmailNotificationsRepository {
         const { content, template_id, variables, destinations, title } =
           updateEmailNotificationDto;
 
-        const hasUpdatedNotification = content || destinations || title;
-        const hasUpdatedEmailNotification = template_id || variables;
+        const hasUpdatedNotification = !!content || !!destinations || !!title;
+        const hasUpdatedEmailNotification = !!template_id || !!variables;
 
-        if (!hasUpdatedEmailNotification && !hasUpdatedEmailNotification)
-          return 0;
+        if (!hasUpdatedEmailNotification && !hasUpdatedNotification) return 0;
 
         let resultNotificationAffected = 0;
         let resultEmailNotificationAffected = 0;
@@ -147,6 +143,21 @@ export class EmailNotificationsRepository {
   ) {
     return await this.emailNotificationsRepository.findOne({
       where: { notification: { user: { id: userId }, id: notificationId } },
+      relations: {
+        template: true,
+      },
     });
+  }
+
+  async send(
+    notification: Notification,
+    emailNotification: EmailNotifications,
+  ) {
+    return await this.emailClient.sendEmail(
+      notification.title,
+      notification.destinations,
+      emailNotification.template.template_id,
+      emailNotification.variables,
+    );
   }
 }

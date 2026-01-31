@@ -82,4 +82,13 @@ export class NotificationsController {
       notificationId,
     );
   }
+
+  @Post('/send-notification/:id')
+  @ApiBearerAuth()
+  sendNotification(
+    @ReqUser() user: RequestUserDto,
+    @Param('id') notificationId: string,
+  ) {
+    return this.notificationsService.sendNotification(user.id, notificationId);
+  }
 }
