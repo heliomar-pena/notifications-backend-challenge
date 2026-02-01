@@ -81,11 +81,6 @@ describe('AppController (e2e)', () => {
 
   describe('/auth/login (POST)', () => {
     describe('When credentials are invalid', () => {
-      beforeEach(() => {
-        email = 'invalid_email@not-correct.com';
-        password = 'INVALID_PASS';
-      });
-
       it('Then it should return 401 UNAUTHORIZED', async () => {
         return request(app.getHttpServer())
           .post('/auth/login')

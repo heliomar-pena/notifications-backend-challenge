@@ -24,7 +24,7 @@ export class EmailNotifications {
 
   @ManyToOne(
     () => EmailTemplates,
-    (emailTemplates) => emailTemplates.emailNotifications,
+    (emailTemplates) => emailTemplates.email_notifications,
   )
   @JoinColumn()
   template: EmailTemplates;

@@ -3,8 +3,8 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { EmailNotifications } from '../../email-notifications/entities/email-notifications.entity';
@@ -17,7 +17,7 @@ export class EmailTemplates {
   @Column({ nullable: false, unique: true })
   template_id: string;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User, (user) => user.email_templates)
   @JoinColumn()
   user: User;
 
@@ -25,5 +25,5 @@ export class EmailTemplates {
     () => EmailNotifications,
     (emailNotification) => emailNotification.template,
   )
-  emailNotifications: EmailNotifications[];
+  email_notifications: EmailNotifications[];
 }

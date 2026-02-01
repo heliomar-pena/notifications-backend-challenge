@@ -6,12 +6,8 @@ import {
   ValidateNested,
   IsIn,
 } from 'class-validator';
-import { TemplateVariable } from 'resend';
 
-export class TemplateVariableDto implements Omit<
-  TemplateVariable,
-  'created_at' | 'updated_at'
-> {
+export class TemplateVariableDto {
   @ApiProperty({
     example: 'A_VARIABLE_HERE',
     description: 'Variable key',
@@ -44,8 +40,7 @@ export class CreateTemplateDto {
 
   @IsString()
   @ApiProperty({
-    example:
-      "<div style={{ background: 'red' }}>This gives style to my email, {{{A_VARIABLE_HERE}}}</div>",
+    example: '<div>This gives style to my email, {{{A_VARIABLE_HERE}}}</div>',
   })
   html: string;
 

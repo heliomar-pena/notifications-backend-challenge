@@ -58,7 +58,7 @@ export class EmailTemplatesController {
         id: 'af2340e1-f317-4a23-8ae7-b50c3a80e6e5',
         name: 'My second template',
         status: 'draft',
-        html: "<div style={{ background: 'red' }}>This gives style to my email, {{{A_VARIABLE_HERE}}}</div>",
+        html: '<div>This gives style to my email, {{{A_VARIABLE_HERE}}}</div>',
         variables: [
           {
             key: 'A_VARIABLE_HERE',

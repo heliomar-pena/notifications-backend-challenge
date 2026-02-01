@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CreateTemplateDto } from '../email-templates/dto/create-template.dto';
-import { Resend } from 'resend';
 import type { ConfigType } from '@nestjs/config';
 import emailConfig from './email.config';
 import { EmailClientError } from './email.error';
@@ -8,16 +7,55 @@ import { UpdateTemplateDto } from 'src/email-templates/dto/update-template.dto';
 import { EmailTemplates } from 'src/email-templates/entities/email-templates.entity';
 import { EmailNotifications } from 'src/email-notifications/entities/email-notifications.entity';
 import { Notification } from 'src/notifications/entities/notification.entity';
+import { HttpService } from '@nestjs/axios';
+import { AxiosError } from 'axios';
+import { firstValueFrom } from 'rxjs';
+import {
+  EmailResponseError,
+  EmailResponseSuccess,
+} from './dto/EmailResponse.dto';
+import { CreateResourceResponseDto } from './dto/CreateResourceResponse.dto';
+import { SendEmailBodyDto } from './dto/SendEmailBody.dto';
+import { EmailErrorResponseDto } from './dto/EmailErrorResponse.dto';
+import { TemplateDetailsResponse } from './dto/TemplateDetailsResponse';
 
 @Injectable()
 export class EmailClient {
-  private resend: Resend;
-
   constructor(
+    private readonly httpService: HttpService,
     @Inject(emailConfig.KEY)
     private emailEnvs: ConfigType<typeof emailConfig>,
-  ) {
-    this.resend = new Resend(emailEnvs.apiKey);
+  ) {}
+
+  async #sendRequest<Result, Body>(
+    path: string,
+    method: 'post' | 'patch' | 'get' | 'put' | 'delete',
+    body?: Body,
+  ): Promise<EmailResponseSuccess<Result> | EmailResponseError> {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${this.emailEnvs.apiKey}`,
+      },
+    };
+
+    return await firstValueFrom(
+      this.httpService[method]<Result>(
+        `${this.emailEnvs.url}/${path}`,
+        ['get', 'delete'].includes(method) ? config : body,
+        config,
+      ),
+    )
+      .then((res) => {
+        return { data: res.data, error: null };
+      })
+      .catch((err: AxiosError<EmailErrorResponseDto>) => {
+        const safeErrorResponse = {
+          error: err.response?.data,
+          data: null,
+        } as EmailResponseError;
+
+        return safeErrorResponse;
+      });
   }
 
   async sendEmail(
@@ -26,7 +64,10 @@ export class EmailClient {
     templateId: EmailTemplates['template_id'],
     variables: EmailNotifications['variables'],
   ) {
-    const result = await this.resend.emails.send({
+    const result = await this.#sendRequest<
+      CreateResourceResponseDto,
+      SendEmailBodyDto
+    >('emails', 'post', {
       subject,
       from: this.emailEnvs.fromEmail,
       to,
@@ -44,7 +85,10 @@ export class EmailClient {
   }
 
   async createTemplate(createTemplateDto: CreateTemplateDto) {
-    const result = await this.resend.templates.create(createTemplateDto);
+    const result = await this.#sendRequest<
+      CreateResourceResponseDto,
+      CreateTemplateDto
+    >('templates', 'post', createTemplateDto);
 
     if (result.error) {
       throw new EmailClientError(result.error);
@@ -54,7 +98,10 @@ export class EmailClient {
   }
 
   async getTemplate(id: string) {
-    const result = await this.resend.templates.get(id);
+    const result = await this.#sendRequest<TemplateDetailsResponse, undefined>(
+      `templates/${id}`,
+      'get',
+    );
 
     if (result.error) {
       throw new EmailClientError(result.error);
@@ -71,10 +118,10 @@ export class EmailClient {
     templateId: string,
     updateTemplateDto: UpdateTemplateDto,
   ) {
-    const result = await this.resend.templates.update(
-      templateId,
-      updateTemplateDto,
-    );
+    const result = await this.#sendRequest<
+      CreateResourceResponseDto,
+      UpdateTemplateDto
+    >(`templates/${templateId}`, 'patch', updateTemplateDto);
 
     if (result.error) {
       throw new EmailClientError(result.error);
@@ -84,7 +131,7 @@ export class EmailClient {
   }
 
   async deleteTemplate(templateId: string) {
-    const result = await this.resend.templates.remove(templateId);
+    const result = await this.#sendRequest(`templates/${templateId}`, 'delete');
 
     if (result.error) {
       throw new EmailClientError(result.error);
@@ -94,7 +141,10 @@ export class EmailClient {
   }
 
   async publishTemplate(templateId: string) {
-    const result = await this.resend.templates.publish(templateId);
+    const result = await this.#sendRequest(
+      `templates/${templateId}/publish`,
+      'post',
+    );
 
     if (result.error) {
       throw new EmailClientError(result.error);

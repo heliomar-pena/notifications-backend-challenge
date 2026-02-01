@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { ErrorResponse } from 'resend';
+import { EmailErrorResponseDto } from './dto/EmailErrorResponse.dto';
 
 export class EmailClientError extends HttpException {
-  constructor(error: ErrorResponse) {
+  constructor(error: EmailErrorResponseDto) {
     super(error.message, error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }
