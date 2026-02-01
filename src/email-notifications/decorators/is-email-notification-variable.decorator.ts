@@ -2,11 +2,11 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { CreateEmailNotificationDto } from '../dto/create-email-notification';
+import { CreateEmailNotificationDTO } from '../dto/create-email-notification';
 
 @ValidatorConstraint({ name: 'isEmailNotificationVariable', async: false })
 export class IsEmailNotificationVariable implements ValidatorConstraintInterface {
-  validate(variables: CreateEmailNotificationDto['variables']): boolean {
+  validate(variables: CreateEmailNotificationDTO['variables']): boolean {
     return (
       !variables ||
       Object.values(variables).every(

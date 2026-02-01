@@ -1,6 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { CustomClassValidationError } from 'src/errors/custom-class-validation-error.error';
+import { CustomClassValidationError } from 'src/notifications/errors/custom-class-validation-error.error';
 
 export const validateClass = async function validateClass<
   ClassToValidateT extends new () => VariableT,

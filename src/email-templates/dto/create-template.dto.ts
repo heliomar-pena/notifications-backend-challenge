@@ -13,7 +13,7 @@ export class TemplateVariableDto implements Omit<
   'created_at' | 'updated_at'
 > {
   @ApiProperty({
-    example: 'firstName',
+    example: 'A_VARIABLE_HERE',
     description: 'Variable key',
   })
   @IsString()
@@ -29,7 +29,7 @@ export class TemplateVariableDto implements Omit<
 
   @ApiProperty({
     type: 'string',
-    example: '',
+    example: 'default value in case variable is not provided',
     required: false,
     description: 'Fallback value (string or number)',
   })
@@ -39,11 +39,14 @@ export class TemplateVariableDto implements Omit<
 
 export class CreateTemplateDto {
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ example: 'My first template' })
   name: string;
 
   @IsString()
-  @ApiProperty()
+  @ApiProperty({
+    example:
+      "<div style={{ background: 'red' }}>This gives style to my email, {{{A_VARIABLE_HERE}}}</div>",
+  })
   html: string;
 
   @ApiProperty({

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
 import { Repository } from 'typeorm';
-import { CreateNotificationDto } from './dto/create-notification.dto';
+import { CreateNotificationDTO } from './dto/create-notification.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UpdateNotificationDTO } from './dto/update-notification.dto';
 
@@ -15,7 +15,7 @@ export class NotificationsRepository {
 
   async create(
     userId: string,
-    createNotificationDto: CreateNotificationDto,
+    createNotificationDto: CreateNotificationDTO,
   ): Promise<Notification['id'] | undefined> {
     const result = await this.notificationsRepository.insert({
       user: { id: userId },

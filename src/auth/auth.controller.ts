@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { LocalAuthGuard } from './local-auth.guard';
 import { AuthService } from './auth.service';
-import { ApiBody } from '@nestjs/swagger';
+import { ApiBody, ApiOperation } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/auth/dto/create-user.dto';
 import { Public } from './public-route.decorator';
 import { LoginUserDTO } from './dto/login-user.dto';
@@ -20,6 +20,9 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Public()
+  @ApiOperation({
+    summary: 'Authenticate with email and password.',
+  })
   @UsePipes(new ValidationPipe())
   @UseGuards(LocalAuthGuard)
   @Post('login')
@@ -31,6 +34,7 @@ export class AuthController {
   }
 
   @Public()
+  @ApiOperation({ summary: 'Create a new user with email and password.' })
   @Post('sign-up')
   @UsePipes(new ValidationPipe())
   create(@Body() createUserDto: CreateUserDto) {

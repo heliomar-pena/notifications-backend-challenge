@@ -1,5 +1,5 @@
 import { User } from 'src/users/entities/user.entity';
-import { CreateNotificationDto } from '../dto/create-notification.dto';
+import { CreateNotificationDTO } from '../dto/create-notification.dto';
 import { UpdateNotificationDTO } from '../dto/update-notification.dto';
 import { Notification } from '../entities/notification.entity';
 
@@ -8,7 +8,7 @@ export interface NotificationStrategy<
 > {
   create(
     userId: User['id'],
-    createNotificationDto: CreateNotificationDto,
+    createNotificationDto: CreateNotificationDTO,
   ): Promise<{ id: Notification['id'] }>;
 
   edit(

@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { User } from 'src/users/entities/user.entity';
-import { CreateNotificationDto } from './dto/create-notification.dto';
+import { CreateNotificationDTO } from './dto/create-notification.dto';
 import { UpdateNotificationDTO } from './dto/update-notification.dto';
 import { Notification } from './entities/notification.entity';
 import { NotificationsRepository } from './notifications.repository';
@@ -12,7 +12,7 @@ import { NotificationFactory } from './strategies/notification-factory.service';
 import {
   NotificationStatus,
   NotificationStatusType,
-} from 'src/enums/notification-status.enum';
+} from 'src/notifications/enums/notification-status.enum';
 
 @Injectable()
 export class NotificationsService {
@@ -55,7 +55,7 @@ export class NotificationsService {
 
   createNotification(
     userId: User['id'],
-    createNotificationDto: CreateNotificationDto,
+    createNotificationDto: CreateNotificationDTO,
   ) {
     const strategy = this.notificationFactory.getStrategy(
       createNotificationDto.channel,

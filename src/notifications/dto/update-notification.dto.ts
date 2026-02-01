@@ -1,6 +1,6 @@
 import { OmitType, PartialType } from '@nestjs/mapped-types';
-import { CreateNotificationDto } from './create-notification.dto';
+import { CreateNotificationDTO } from './create-notification.dto';
 
 export class UpdateNotificationDTO extends PartialType(
-  OmitType(CreateNotificationDto, ['channel']),
+  OmitType(CreateNotificationDTO, ['channel']),
 ) {}

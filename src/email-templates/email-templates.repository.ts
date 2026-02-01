@@ -22,7 +22,7 @@ export class EmailTemplatesRepository {
 
   async getUserTemplate(userId: string, templateId: string) {
     return await this.emailTemplatesRepository.findOne({
-      where: { user: { id: userId }, template_id: templateId },
+      where: { user: { id: userId }, id: templateId },
     });
   }
 
@@ -38,7 +38,7 @@ export class EmailTemplatesRepository {
 
     await this.emailTemplatesRepository.save(template);
 
-    return { id: template.template_id };
+    return { id: template.id };
   }
 
   async getUserDetailedTemplates(userId: string) {
@@ -50,12 +50,16 @@ export class EmailTemplatesRepository {
       userTemplates.map((template) => template.template_id),
     );
 
-    return templateDetails;
+    return templateDetails.map((template) => ({
+      ...template,
+      id: userTemplates.find(({ template_id }) => template_id === template.id)
+        ?.id,
+    }));
   }
 
   async getUserDetailedTemplate(userId: string, templateId: string) {
     const userTemplate = await this.emailTemplatesRepository.findOne({
-      where: { user: { id: userId }, template_id: templateId },
+      where: { user: { id: userId }, id: templateId },
     });
 
     if (!userTemplate) throw new NotFoundException();
@@ -76,12 +80,12 @@ export class EmailTemplatesRepository {
       throw new NotFoundException();
     }
 
-    const clientResult = await this.emailClient.updateTemplate(
+    await this.emailClient.updateTemplate(
       template.template_id,
       updateTemplateDto,
     );
 
-    return { id: clientResult.id };
+    return { id: template.id };
   }
 
   async deleteTemplate(userId: string, templateId: string) {

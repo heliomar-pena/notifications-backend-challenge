@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../auth/dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -27,13 +26,5 @@ export class UsersRepository {
 
   findByEmail(email: User['email']) {
     return this.usersRepository.findOneBy({ email: email });
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return this.usersRepository.update(id, updateUserDto);
-  }
-
-  remove(id: number) {
-    return this.usersRepository.delete(id);
   }
 }

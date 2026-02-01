@@ -1,4 +1,4 @@
-import { CreateNotificationDto } from 'src/notifications/dto/create-notification.dto';
+import { CreateNotificationDTO } from 'src/notifications/dto/create-notification.dto';
 import {
   IsArray,
   IsEmail,
@@ -11,7 +11,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmailNotificationVariable } from '../decorators/is-email-notification-variable.decorator';
 
-export class CreateEmailNotificationDto extends CreateNotificationDto {
+export class CreateEmailNotificationDTO extends CreateNotificationDTO {
   @ApiProperty()
   @IsArray()
   @IsEmail({}, { each: true })

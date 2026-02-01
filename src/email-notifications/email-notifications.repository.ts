@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmailNotifications } from './entities/email-notifications.entity';
 import { Repository } from 'typeorm';
-import { CreateEmailNotificationDto } from './dto/create-email-notification';
+import { CreateEmailNotificationDTO } from './dto/create-email-notification';
 import { Notification } from 'src/notifications/entities/notification.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UpdateEmailNotificationDTO } from './dto/update-email-notification.dto';
@@ -19,7 +19,7 @@ export class EmailNotificationsRepository {
 
   async createEmailNotification(
     userId: string,
-    createEmailNotificationDto: CreateEmailNotificationDto,
+    createEmailNotificationDTO: CreateEmailNotificationDTO,
     template: EmailTemplates,
   ): Promise<{
     id: Notification['id'];
@@ -30,13 +30,13 @@ export class EmailNotificationsRepository {
           .getRepository(EmailNotifications)
           .create({
             template: template,
-            variables: createEmailNotificationDto.variables,
+            variables: createEmailNotificationDTO.variables,
           });
         const notification = manager.getRepository(Notification).create({
-          channel: createEmailNotificationDto.channel,
-          content: createEmailNotificationDto.content,
-          title: createEmailNotificationDto.title,
-          destinations: createEmailNotificationDto.destinations,
+          channel: createEmailNotificationDTO.channel,
+          content: createEmailNotificationDTO.content,
+          title: createEmailNotificationDTO.title,
+          destinations: createEmailNotificationDTO.destinations,
           user: { id: userId },
         });
 

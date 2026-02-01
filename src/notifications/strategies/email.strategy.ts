@@ -8,7 +8,7 @@ import { User } from 'src/users/entities/user.entity';
 import { UpdateEmailNotificationDTO } from '../../email-notifications/dto/update-email-notification.dto';
 import { Notification } from '../entities/notification.entity';
 import { EmailTemplatesRepository } from 'src/email-templates/email-templates.repository';
-import { CreateEmailNotificationDto } from 'src/email-notifications/dto/create-email-notification';
+import { CreateEmailNotificationDTO } from 'src/email-notifications/dto/create-email-notification';
 import { EmailNotificationsRepository } from 'src/email-notifications/email-notifications.repository';
 import { EmailTemplates } from 'src/email-templates/entities/email-templates.entity';
 import { EmailNotifications } from 'src/email-notifications/entities/email-notifications.entity';
@@ -43,22 +43,22 @@ export class EmailStrategy implements NotificationStrategy<DetailedNotification>
 
   async create(
     userId: User['id'],
-    createNotificationDto: CreateEmailNotificationDto,
+    createNotificationDto: CreateEmailNotificationDTO,
   ) {
-    const createEmailNotificationDto = await validateClass(
-      CreateEmailNotificationDto,
+    const createEmailNotificationDTO = await validateClass(
+      CreateEmailNotificationDTO,
       createNotificationDto,
     );
 
     const template = await this.#getUserTemplateOrFail(
       userId,
-      createEmailNotificationDto.template_id!,
+      createEmailNotificationDTO.template_id!,
     );
 
     const result =
       await this.emailNotificationsRepository.createEmailNotification(
         userId,
-        createEmailNotificationDto,
+        createEmailNotificationDTO,
         template,
       );
 
