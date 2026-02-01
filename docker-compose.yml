@@ -29,6 +29,8 @@ services:
       POSTGRES_USER: test4@b23!
       POSTGRES_PASSWORD: test.@345
       POSTGRES_DB: test_db
+    ports:
+      - '5434:5432'
 
   api:
     extends:
