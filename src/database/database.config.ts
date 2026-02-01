@@ -9,6 +9,10 @@ const databaseConfig = registerAs('database', () => ({
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE,
   syncronize: process.env.DATABASE_SYNCRONIZE === 'true',
+  migrations:
+    process.env.DATABASE_RUN_SEEDS === 'true'
+      ? [__dirname + '/migrations/**/*.ts', __dirname + '/seeds/**/*.ts']
+      : [__dirname + '/migrations/**/*.ts'],
 }));
 
 export default databaseConfig;

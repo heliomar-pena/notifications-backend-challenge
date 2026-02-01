@@ -3,7 +3,7 @@ import { IsEmail } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({
-    example: 'john.doe@local.com',
+    example: 'john.doe@acme.com',
     description: 'The email address of the user',
   })
   @IsEmail()

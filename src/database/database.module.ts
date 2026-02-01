@@ -1,22 +1,14 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigType } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import databaseConfig from './database.config';
+import generateDataSourceConfig from './utils/generate-data-source-config';
 
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule.forFeature(databaseConfig)],
-      useFactory: (configuration: ConfigType<typeof databaseConfig>) => ({
-        type: 'postgres',
-        host: configuration.host,
-        port: configuration.port,
-        username: configuration.username,
-        password: configuration.password,
-        database: configuration.database,
-        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-        synchronize: configuration.syncronize,
-      }),
+      useFactory: generateDataSourceConfig,
       inject: [databaseConfig.KEY],
     }),
   ],

@@ -15,4 +15,4 @@ CMD [ "start:dev" ]
 
 FROM backend-base AS test
 
-CMD [ "test:e2e", "--watch" ]
+CMD [ "test:e2e" ]

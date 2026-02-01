@@ -13,6 +13,11 @@ services:
       - DATABASE_PORT=5432
     profiles:
       - test
+    develop:
+      watch:
+        - path: ./test
+          target: /app
+          action: sync+restart
 
   postgres_test:
     extends:
