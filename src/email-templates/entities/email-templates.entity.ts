@@ -1,6 +1,7 @@
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -26,4 +27,7 @@ export class EmailTemplates {
     (emailNotification) => emailNotification.template,
   )
   email_notifications: EmailNotifications[];
+
+  @DeleteDateColumn()
+  deleted_at?: Date;
 }
