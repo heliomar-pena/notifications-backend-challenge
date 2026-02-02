@@ -1,6 +1,7 @@
 # Backend Challenge
 
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/heliomar-pena/notifications-backend-challenge/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/heliomar-pena/notifications-backend-challenge/tree/main)
+[![Coverage Status](https://coveralls.io/repos/github/heliomar-pena/notifications-backend-challenge/badge.svg?branch=main)](https://coveralls.io/github/heliomar-pena/notifications-backend-challenge?branch=main)
 
 You have to build a system of notifications handling for authenticated users.
 
@@ -169,27 +170,27 @@ docker compose --profile api watch
 
 1. Start the DB
 
-    ```bash
-    docker compose up postgres_db
-    ```
+   ```bash
+   docker compose up postgres_db
+   ```
 
 2. Switch to Node 24, for nvm just run:
 
-    ```bash
-    nvm use
-    ```
+   ```bash
+   nvm use
+   ```
 
 3. Install the dependencies:
 
-    ```bash
-    npm i
-    ```
+   ```bash
+   npm i
+   ```
 
 4. Then you can run the app:
 
-    ```bash
-    npm run start:dev
-    ```
+   ```bash
+   npm run start:dev
+   ```
 
 Remember to fill the DB credentials in the .envs.
 
