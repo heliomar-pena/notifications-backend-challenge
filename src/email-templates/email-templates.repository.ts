@@ -99,7 +99,7 @@ export class EmailTemplatesRepository {
       template.template_id,
     );
 
-    await this.emailTemplatesRepository.remove(template);
+    await this.emailTemplatesRepository.softDelete({ id: template.id });
 
     return clientResult;
   }

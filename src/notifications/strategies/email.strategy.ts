@@ -8,7 +8,7 @@ import { User } from 'src/users/entities/user.entity';
 import { UpdateEmailNotificationDTO } from '../../email-notifications/dto/update-email-notification.dto';
 import { Notification } from '../entities/notification.entity';
 import { EmailTemplatesRepository } from 'src/email-templates/email-templates.repository';
-import { CreateEmailNotificationDTO } from 'src/email-notifications/dto/create-email-notification';
+import { CreateEmailNotificationDTO } from 'src/email-notifications/dto/create-email-notification.dto';
 import { EmailNotificationsRepository } from 'src/email-notifications/email-notifications.repository';
 import { EmailTemplates } from 'src/email-templates/entities/email-templates.entity';
 import { EmailNotifications } from 'src/email-notifications/entities/email-notifications.entity';

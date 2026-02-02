@@ -31,7 +31,7 @@ export class NotificationsProviderClient {
   async sendPushNotification(notification: Notification) {
     const result = await firstValueFrom(
       this.httpService.post<{ id: string }>(
-        `${this.notificationsEnv.url}/push-notification`,
+        `${this.notificationsEnv.url}/push`,
         {
           destinations: notification.destinations,
           title: notification.title,

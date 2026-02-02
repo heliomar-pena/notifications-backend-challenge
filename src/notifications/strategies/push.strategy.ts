@@ -24,7 +24,8 @@ export class PushStrategy extends BaseNotificationStrategy<
     userId: string,
     notification: Notification,
   ): Promise<{ referenceId: string }> {
-    const result = await this.notificationsProviderClient.sendSMS(notification);
+    const result =
+      await this.notificationsProviderClient.sendPushNotification(notification);
 
     return { referenceId: result };
   }

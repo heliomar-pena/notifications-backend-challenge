@@ -21,7 +21,7 @@ import {
 import { CreateResourceResponseDto } from './dto/CreateResourceResponse.dto';
 import { SendEmailBodyDto } from './dto/SendEmailBody.dto';
 import { EmailErrorResponseDto } from './dto/EmailErrorResponse.dto';
-import { TemplateDetailsResponse } from './dto/TemplateDetailsResponse';
+import { TemplateDetailsResponseDTO } from './dto/TemplateDetailsResponse.dto';
 
 @Injectable()
 export class EmailClient {
@@ -105,10 +105,10 @@ export class EmailClient {
   }
 
   async getTemplate(id: string) {
-    const result = await this.#sendRequest<TemplateDetailsResponse, undefined>(
-      `templates/${id}`,
-      'get',
-    );
+    const result = await this.#sendRequest<
+      TemplateDetailsResponseDTO,
+      undefined
+    >(`templates/${id}`, 'get');
 
     if (result.error) {
       throw new EmailClientError(result.error);

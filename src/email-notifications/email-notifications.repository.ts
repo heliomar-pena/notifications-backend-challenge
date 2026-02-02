@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmailNotifications } from './entities/email-notifications.entity';
 import { Repository } from 'typeorm';
-import { CreateEmailNotificationDTO } from './dto/create-email-notification';
+import { CreateEmailNotificationDTO } from './dto/create-email-notification.dto';
 import { Notification } from 'src/notifications/entities/notification.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UpdateEmailNotificationDTO } from './dto/update-email-notification.dto';

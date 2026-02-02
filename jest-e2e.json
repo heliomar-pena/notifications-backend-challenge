@@ -13,13 +13,19 @@
   "coveragePathIgnorePatterns": [
     "<rootDir>/src/database/migrations",
     "<rootDir>/src/database/seeds",
+    "<rootDir>/src/config",
+    "<rootDir>/src/database",
     "<rootDir>/test/"
   ],
-  "coverageProvider": "v8",
   "collectCoverage": true,
   "collectCoverageFrom": [
     "<rootDir>/src/**/*.{ts,js}",
-    "!<rootDir>/src/**/*.interface.{ts,js}"
+    "!<rootDir>/src/**/*.interface.{ts,js}",
+    "!<rootDir>/src/main.ts",
+    "!<rootDir>/src/**/*.dto.{ts,js}",
+    "!<rootDir>/src/**/*.config.{ts,js}",
+    "!<rootDir>/src/**/entities/*.entity.{ts,js}",
+    "!<rootDir>/src/**/swagger/*.{swagger,example}.{ts,js}"
   ],
   "coverageDirectory": "<rootDir>/coverage"
 }

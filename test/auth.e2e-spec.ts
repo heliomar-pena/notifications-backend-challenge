@@ -45,7 +45,8 @@ describe('AppController (e2e)', () => {
     });
 
     describe('When user is new and credentials are valid', () => {
-      it('Then it should return 201 and the user access token', async () => {
+      let accessToken: string;
+      beforeEach(async () => {
         const response = await request(app.getHttpServer())
           .post('/auth/sign-up')
           .send({
@@ -54,16 +55,17 @@ describe('AppController (e2e)', () => {
           })
           .expect(201);
 
-        expect(response.body).toEqual(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          expect.objectContaining({ access_token: expect.any(String) }),
-        );
+        accessToken = (response.body as { access_token: string }).access_token;
+      });
+
+      it('Then it should return 201 and the user access token', () => {
+        expect(accessToken).toEqual(expect.any(String));
       });
 
       describe('And user attempts to log in', () => {
         it('Then should return 200 and user access token', async () => {
           const response = await request(app.getHttpServer())
-            .post('/auth/sign-up')
+            .post('/auth/login')
             .send({
               email,
               password,
