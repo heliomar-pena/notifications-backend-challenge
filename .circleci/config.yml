@@ -19,7 +19,6 @@ jobs:
       - node/install-packages:
           pkg-manager: npm
 
-      # Wait for Postgres to be ready
       - run:
           name: Wait for DB
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
