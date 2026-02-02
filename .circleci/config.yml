@@ -9,9 +9,9 @@ jobs:
       - image: cimg/node:24.13.0
       - image: cimg/postgres:17.0
         environment:
-          POSTGRES_USER: $DATABASE_USERNAME
-          POSTGRES_PASSWORD: $DATABASE_PASSWORD
-          POSTGRES_DB: $DATABASE
+          POSTGRES_USER: test4@b23!
+          POSTGRES_PASSWORD: test.@345
+          POSTGRES_DB: test_db
 
     steps:
       - checkout
@@ -39,5 +39,4 @@ jobs:
 workflows:
   build_test_deploy: # this can be any name you choose
     jobs:
-      - build_and_test:
-          context: test
+      - build_and_test
