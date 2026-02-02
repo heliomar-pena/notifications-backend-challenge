@@ -8,19 +8,6 @@ jobs:
     docker:
       - image: cimg/node:24.13.0
       - image: cimg/postgres:17.0
-        environment:
-          POSTGRES_USER: ${POSTGRES_TEST_USER}
-          POSTGRES_PASSWORD: ${POSTGRES_TEST_PASSWORD}
-          POSTGRES_DB: ${POSTGRES_TEST_DB}
-
-    environment:
-      DATABASE_HOST: localhost
-      DATABASE_PORT: 5432
-      DATABASE_USERNAME: $POSTGRES_TEST_USER
-      DATABASE_PASSWORD: $POSTGRES_TEST_PASSWORD
-      DATABASE: $POSTGRES_TEST_DB
-      DATABASE_SYNCRONIZE: 'false'
-      DATABASE_RUN_SEEDS: 'true'
 
     steps:
       - checkout
@@ -38,7 +25,6 @@ jobs:
           name: Wait for DB
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
-
       - run:
           name: Run E2E tests
           command: npm run test:e2e -- --coverage
@@ -55,4 +41,5 @@ jobs:
 workflows:
   build_test_deploy: # this can be any name you choose
     jobs:
-      - build_and_test
+      - build_and_test:
+          context: test
