@@ -1,5 +1,7 @@
 # Backend Challenge
 
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/heliomar-pena/notifications-backend-challenge/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/heliomar-pena/notifications-backend-challenge/tree/main)
+
 You have to build a system of notifications handling for authenticated users.
 
 The system must allow to each user manage and send notifications in different channels
