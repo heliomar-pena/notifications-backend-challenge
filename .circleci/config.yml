@@ -8,6 +8,10 @@ jobs:
     docker:
       - image: cimg/node:24.13.0
       - image: cimg/postgres:17.0
+        environment:
+          POSTGRES_USER: $DB_USERNAME
+          POSTGRES_PASSWORD: $DB_PASSWORD
+          POSTGRES_DB: $DB_DATABASE
 
     steps:
       - checkout
