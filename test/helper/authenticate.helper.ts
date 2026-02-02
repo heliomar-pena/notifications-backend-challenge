@@ -25,7 +25,10 @@ const generateResponseWithHeader = (token: string): TokenWithHeader => ({
 
 export const authenticateHelper = (app: INestApplication<App>) => {
   const login = async (
-    loginUserDto: LoginUserDTO,
+    loginUserDto: LoginUserDTO = {
+      email: 'default_user@test.com',
+      password: '123',
+    },
   ): Promise<TokenWithHeader> => {
     const response = await request(app.getHttpServer())
       .post('/auth/login')
@@ -36,7 +39,10 @@ export const authenticateHelper = (app: INestApplication<App>) => {
   };
 
   const signUp = async (
-    createUserDto: CreateUserDto,
+    createUserDto: CreateUserDto = {
+      email: 'default_user@test.com',
+      password: '123',
+    },
   ): Promise<TokenWithHeader> => {
     const response = await request(app.getHttpServer())
       .post('/auth/sign-up')

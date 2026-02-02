@@ -35,7 +35,7 @@ export class SMSStrategy extends BaseNotificationStrategy<
     return await validateClass(CreateSMSNotificationDTO, dtoValue);
   }
 
-  async updateCreateDto(
+  async validateUpdateDto(
     dtoValue: UpdateSMSNotificationDTO,
   ): Promise<UpdateSMSNotificationDTO> {
     return await validateClass(UpdateSMSNotificationDTO, dtoValue);

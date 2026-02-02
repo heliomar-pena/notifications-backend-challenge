@@ -6,10 +6,7 @@ const {
   notificationResponseExample: emailNotificationResponseExample,
 } = generateNotificationPayloadExamples({
   destinations: ['john.doe@local.com'],
-  templates: {
-    id: '123',
-    template_id: '567',
-  },
+  template_id: '123',
   variables: {
     MY_VARIABLE: 'Value for that variable!',
   },

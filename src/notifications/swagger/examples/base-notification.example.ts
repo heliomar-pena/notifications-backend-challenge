@@ -9,8 +9,8 @@ export const baseNotificationResponseExample = {
 };
 
 export const baseNotificationEditRequestExample = {
-  title: 'My great notification',
-  content: 'Hello world!',
+  title: 'A serious notification',
+  content: 'This is very serious',
   destinations: [''],
 };
 

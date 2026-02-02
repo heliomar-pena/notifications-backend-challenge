@@ -35,7 +35,7 @@ export class PushStrategy extends BaseNotificationStrategy<
     return await validateClass(CreatePushNotificationDTO, dtoValue);
   }
 
-  async updateCreateDto(
+  async validateUpdateDto(
     dtoValue: UpdatePushNotificationDTO,
   ): Promise<UpdatePushNotificationDTO> {
     return await validateClass(UpdatePushNotificationDTO, dtoValue);

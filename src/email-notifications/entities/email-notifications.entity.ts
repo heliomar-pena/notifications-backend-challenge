@@ -30,5 +30,5 @@ export class EmailNotifications {
   template: EmailTemplates;
 
   @DeleteDateColumn()
-  deletedAt?: Date;
+  deleted_at?: Date;
 }

@@ -82,5 +82,5 @@ export class Notification {
   user: User;
 
   @DeleteDateColumn()
-  deletedAt?: Date;
+  deleted_at?: Date;
 }
