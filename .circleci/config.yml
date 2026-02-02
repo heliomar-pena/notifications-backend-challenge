@@ -14,12 +14,6 @@ jobs:
       - node/install-packages:
           pkg-manager: npm
 
-      - run:
-          name: Verify env resolution
-          command: |
-            echo "DB USER=$DATABASE_USERNAME"
-            echo "PG USER=$POSTGRES_TEST_USER"
-
       # Wait for Postgres to be ready
       - run:
           name: Wait for DB
