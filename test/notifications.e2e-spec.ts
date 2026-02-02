@@ -112,7 +112,7 @@ describe('NotificationController General Test (e2e) test', () => {
     describe('/notifications/{id} (PUT): And user edits a notification', () => {
       beforeEach(async () => {
         await request(app.getHttpServer())
-          .put(`/notifications/${notification.id}`)
+          .patch(`/notifications/${notification.id}`)
           .set(authHeader)
           .send(smsNotificationEditRequestExample)
           .expect(200);

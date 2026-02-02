@@ -139,7 +139,7 @@ describe('NotificationController Channel Email', () => {
           describe('And destinations are not emails', () => {
             it('Then should return error BAD_REQUEST, destination must be an email', async () => {
               await request(app.getHttpServer())
-                .put(`/notifications/${notification.id}`)
+                .patch(`/notifications/${notification.id}`)
                 .set(authHeader)
                 .send({
                   ...emailNotificationCreateRequestExample,
@@ -157,7 +157,7 @@ describe('NotificationController Channel Email', () => {
           describe('And template is not UUID', () => {
             it('Then should return error BAD_REQUEST, template must be an uuid', async () => {
               await request(app.getHttpServer())
-                .put(`/notifications/${notification.id}`)
+                .patch(`/notifications/${notification.id}`)
                 .set(authHeader)
                 .send({
                   ...emailNotificationCreateRequestExample,
@@ -175,7 +175,7 @@ describe('NotificationController Channel Email', () => {
           describe('And template does not exists', () => {
             it('Then should return error NOT FOUND, template does not exists', async () => {
               await request(app.getHttpServer())
-                .put(`/notifications/${notification.id}`)
+                .patch(`/notifications/${notification.id}`)
                 .set(authHeader)
                 .send(emailNotificationCreateRequestExample)
                 .expect(404)
@@ -190,7 +190,7 @@ describe('NotificationController Channel Email', () => {
           describe('And content is correct', () => {
             it('Then should return 200', async () => {
               await request(app.getHttpServer())
-                .put(`/notifications/${notification.id}`)
+                .patch(`/notifications/${notification.id}`)
                 .set(authHeader)
                 .send({
                   ...emailNotificationEditRequestExample,

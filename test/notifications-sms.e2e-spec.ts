@@ -86,7 +86,7 @@ describe('NotificationController Channel SMS', () => {
         describe('And destinations are not phone numbers', () => {
           it('Then should return error BAD_REQUEST', async () => {
             await request(app.getHttpServer())
-              .put(`/notifications/${notification.id}`)
+              .patch(`/notifications/${notification.id}`)
               .set(authHeader)
               .send({
                 ...smsNotificationEditRequestExample,
@@ -99,7 +99,7 @@ describe('NotificationController Channel SMS', () => {
         describe('And content have more than 160 characters', () => {
           it('Then should return error 400 BAD_REQUEST', async () => {
             await request(app.getHttpServer())
-              .put(`/notifications/${notification.id}`)
+              .patch(`/notifications/${notification.id}`)
               .set(authHeader)
               .send({
                 ...smsNotificationEditRequestExample,
@@ -113,7 +113,7 @@ describe('NotificationController Channel SMS', () => {
         describe('And content is correct', () => {
           it('Then should return 200', async () => {
             await request(app.getHttpServer())
-              .put(`/notifications/${notification.id}`)
+              .patch(`/notifications/${notification.id}`)
               .set(authHeader)
               .send(smsNotificationEditRequestExample)
               .expect(200);

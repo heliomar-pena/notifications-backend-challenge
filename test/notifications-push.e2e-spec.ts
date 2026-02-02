@@ -77,7 +77,7 @@ describe('NotificationController Channel PUSH', () => {
         describe('And destinations are not FCM Tokens', () => {
           it('Then should return error BAD_REQUEST', async () => {
             await request(app.getHttpServer())
-              .put(`/notifications/${notification.id}`)
+              .patch(`/notifications/${notification.id}`)
               .set(authHeader)
               .send({
                 ...pushNotificationEditRequestExample,
@@ -90,7 +90,7 @@ describe('NotificationController Channel PUSH', () => {
         describe('And content is correct', () => {
           it('Then should return 200', async () => {
             await request(app.getHttpServer())
-              .put(`/notifications/${notification.id}`)
+              .patch(`/notifications/${notification.id}`)
               .set(authHeader)
               .send(pushNotificationEditRequestExample)
               .expect(200);

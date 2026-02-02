@@ -4,8 +4,8 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
-  Put,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -83,7 +83,7 @@ export class NotificationsController {
     );
   }
 
-  @Put('/:id')
+  @Patch('/:id')
   @ApiOperation({
     summary: 'Edits a notification that is in mode DRAFT.',
     description:

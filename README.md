@@ -103,13 +103,46 @@ In order to create a Push notifications, you should:
 1. Docker installed without SUDO permission.
 2. Docker compose installed without SUDO permission.
 3. Ports free: 3000 and 5433.
+4. Configure env vars. Check .env.example for a reference
 
 ### If you want to run it without docker
 
 1. Postgres 17
 2. Node 24
 
-## How to run it
+## How to run the API
+
+### Custom scripts
+
+There are some custom scripts you can use instead of writing the docker command manually.
+
+#### Run API
+
+Starts the DB and the API:
+
+```sh
+./scripts/up_dev.sh
+```
+
+#### Watch API (development mode)
+
+Starts the DB and the API in Watch mode:
+
+```sh
+./scripts/watch_dev.sh
+```
+
+When docker run in mode watch, logs are hidden, you have to access them in other terminal with the next script:
+
+```sh
+./scripts/logs_dev.sh
+```
+
+#### Run tests
+
+```sh
+./scripts/up_test.sh
+```
 
 ### API with Docker
 
@@ -127,5 +160,96 @@ docker compose --profile api watch
 > In watch mode, logs are hidden, you can access them by running:
 >
 > ```bash
-> docker compose --profile api watch
+> docker compose --profile api logs -f
 > ```
+
+### Run only the DB with docker and the API with node.
+
+1. Start the DB
+
+    ```bash
+    docker compose up postgres_db
+    ```
+
+2. Switch to Node 24, for nvm just run:
+
+    ```bash
+    nvm use
+    ```
+
+3. Install the dependencies:
+
+    ```bash
+    npm i
+    ```
+
+4. Then you can run the app:
+
+    ```bash
+    npm run start:dev
+    ```
+
+Remember to fill the DB credentials in the .envs.
+
+## How to run the tests
+
+### Tests with Docker
+
+```bash
+docker compose --profile test up
+```
+
+> [!NOTE]
+> In watch mode, logs are hidden, you can access them by running:
+>
+> ```bash
+> docker compose --profile api logs -f
+> ```
+
+### Run only the testing DB with docker and the tests with node.
+
+```bash
+docker compose up postgres_test
+```
+
+Then you can run the tests:
+
+```bash
+npm run test:e2e
+```
+
+> [!NOTE]
+> Remember to fill the DB credentials in the .envs.
+
+## Areas to improve
+
+- Swagger documentation can be moved to an external file.
+- Error handling could be improved (e.g if user tries to modify a notification channel, not error is thrown but it's not allowed).
+- We need a way to register and validate the phone number and the emails that will be used in e-mail and sms channels.
+
+## Technologies
+
+- Nest
+- Node
+- TypeORM
+- PostgresSQL
+
+## Decisions made
+
+- Clean Architecture: To be able to handle further changes in the future in a proper way.
+- TypeORM: It is already integrated with NestJS Framework and it's the most popular ORM, so it's easy to find solutions and people that know how to use it.
+- Docker: To make it portable.
+- Jest/Testing/E2E: Jest is the most used testing framework. E2E testing was done because in this case testing all features together is more convenient that testing every single part of the application, allowing us to test how the strategies integrates with services properly depending of the payload passed to the controller.
+- Strategy pattern: Was used for different channels to make it easy to continue adding more channels without modifying the current code. This pattern allows different behaviors for each channel.
+- Template pattern: To avoid repeating logic between the different channels, used the template pattern to build the skeleton of the class for notifications, and then overrided the necessary methods (for example, the methods of validation of the payload), in each strategy.
+
+## Routes
+
+- [API Swagger](http://localhost:3000/api)
+
+## Env Vars
+
+1. DB environment variables: Fill it with the details of your postgres db, if you're using docker for the postgres db, then copy and paste the values from docker-compose.
+2. JWT_SECRET: This is the value used for encrypt and decrypt your user's JWT tokens. You can use any value here, or use a online tool for generate a secure hash, like [this one](https://jwtsecretkeygenerator.com/).
+3. Email Services: It's actually integrated with [resend](https://resend.com/), so if you have an account or want to create one, you can fill EMAIL_API_URL with `https://api.resend.com`, `EMAIL_API_KEY` with your API KEY and `FROM_EMAIL` with your registered email (it's `onboarding@resend.dev` in the case you have not any registered email). If you don't want to use resend, just fill the details with random values. (Email templates and email notifications will not work properly).
+4. Notifications Providers: Just fill it with random values as they are not real APIs.
