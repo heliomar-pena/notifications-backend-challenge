@@ -1,4 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateTemplateDto } from '../email-templates/dto/create-template.dto';
 import type { ConfigType } from '@nestjs/config';
 import emailConfig from './email.config';
@@ -53,6 +57,9 @@ export class EmailClient {
           error: err.response?.data,
           data: null,
         } as EmailResponseError;
+
+        if (!safeErrorResponse.error)
+          throw new InternalServerErrorException(err.message);
 
         return safeErrorResponse;
       });
