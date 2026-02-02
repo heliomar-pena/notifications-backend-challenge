@@ -4,18 +4,46 @@ orbs:
   node: circleci/node@7.2.1
 
 jobs:
-  build_and_test: # this can be any name you choose
-    executor: node/default # use the default executor defined within the orb
+  build_and_test:
+    docker:
+      - image: cimg/node:24.13.0
+      - image: cimg/postgres:17.0
+        environment:
+          POSTGRES_USER: ${POSTGRES_TEST_USER}
+          POSTGRES_PASSWORD: ${POSTGRES_TEST_PASSWORD}
+          POSTGRES_DB: ${POSTGRES_TEST_DB}
+
+    environment:
+      DATABASE_HOST: localhost
+      DATABASE_PORT: 5432
+      DATABASE_USERNAME: ${POSTGRES_TEST_USER}
+      DATABASE_PASSWORD: ${POSTGRES_TEST_PASSWORD}
+      DATABASE: ${POSTGRES_TEST_DB}
+      DATABASE_SYNCRONIZE: 'false'
+      DATABASE_RUN_SEEDS: 'true'
+
     steps:
       - checkout
       - node/install-packages:
           pkg-manager: npm
+
+      # Wait for Postgres to be ready
       - run:
+          name: Wait for Postgres
+          command: |
+            for i in {1..30}; do
+              pg_isready -h localhost -p 5432 && break
+              sleep 1
+            done
+
+      - run:
+          name: Run E2E tests
           command: npm run test:e2e -- --coverage
-          name: Run tests
+
       - run:
-          command: npm run build
           name: Build app
+          command: npm run build
+
       - persist_to_workspace:
           root: ~/project
           paths:
