@@ -11,6 +11,46 @@ The system must allow to each user manage and send notifications in different ch
 
 - [Swagger](http://backend-challenge-a97513773692.herokuapp.com/api)
 
+## Table of Content
+
+- [Backend Challenge](#backend-challenge)
+  - [App Running on](#app-running-on)
+  - [Table of Content](#table-of-content)
+  - [Features](#features)
+    - [Authentication](#authentication)
+    - [Notification handling](#notification-handling)
+    - [Send notification](#send-notification)
+  - [Notifications channel specifications](#notifications-channel-specifications)
+    - [Email Channel](#email-channel)
+      - [Templates](#templates)
+      - [Variables](#variables)
+      - [Custom validations](#custom-validations)
+    - [SMS Channel](#sms-channel)
+      - [SMS Custom validations](#sms-custom-validations)
+    - [Push Channel](#push-channel)
+      - [Push Custom validations](#push-custom-validations)
+  - [Pre-requisites](#pre-requisites)
+    - [If you want to run it dockerized](#if-you-want-to-run-it-dockerized)
+    - [If you want to run it without docker](#if-you-want-to-run-it-without-docker)
+  - [How to run the API](#how-to-run-the-api)
+    - [Custom scripts](#custom-scripts)
+      - [Run API](#run-api)
+      - [Watch API (development mode)](#watch-api-development-mode)
+      - [Run tests](#run-tests)
+    - [With Docker](#with-docker)
+      - [API](#api)
+    - [Run DB with Docker and API with Node](#run-db-with-docker-and-api-with-node)
+  - [Run the migrations](#run-the-migrations)
+  - [How to run the tests](#how-to-run-the-tests)
+    - [Tests with Docker](#tests-with-docker)
+    - [Test DB in docker, but the tests in node](#test-db-in-docker-but-the-tests-in-node)
+  - [Areas to improve](#areas-to-improve)
+  - [Technologies](#technologies)
+  - [Decisions made](#decisions-made)
+  - [Routes](#routes)
+  - [Env Vars](#env-vars)
+
+
 ## Features
 
 ### Authentication
@@ -151,7 +191,11 @@ When docker run in mode watch, logs are hidden, you have to access them in other
 ./scripts/up_test.sh
 ```
 
-### API with Docker
+### With Docker
+
+As alternative, can be run using Docker compose directly, instead of the custom scripts.
+
+#### API
 
 ```bash
 docker compose --profile api up
@@ -170,7 +214,9 @@ docker compose --profile api watch
 > docker compose --profile api logs -f
 > ```
 
-### Run only the DB with docker and the API with node.
+### Run DB with Docker and API with Node
+
+It's also possible to start only the Database in Docker, and the application in NodeJS.
 
 1. Start the DB
 
@@ -198,7 +244,23 @@ docker compose --profile api watch
 
 Remember to fill the DB credentials in the .envs.
 
+## Run the migrations
+
+Running the DB (in postgres or locally) its the first step, the second step is filling the DB with the needed structure, for that, we use migrations which contains the tables and columns we need on the application.
+
+Also, if wanted, there are also seeds that loads small pre-defined data to start working on. To run the seeds, it's needed to add the `DATABASE_RUN_SEEDS=true` variable in the .env file.
+
+To run the migrations, fill the .env with the data to connect to your database, then run:
+
+```bash
+npm run typeorm:migrate
+```
+
 ## How to run the tests
+
+The tests uses a test database which is preferable to run in docker, that is why there is a profile in the docker compose dedicated to the tests, that way you can run the tests with only one command.
+
+There is also the possibility of running the postgres_test database from the docker compose, and run the tests in your machine using node directly.
 
 ### Tests with Docker
 
@@ -207,13 +269,13 @@ docker compose --profile test up
 ```
 
 > [!NOTE]
-> In watch mode, logs are hidden, you can access them by running:
+> If you run it in watch mode, logs are hidden by default, you can access them by running:
 >
 > ```bash
 > docker compose --profile api logs -f
 > ```
 
-### Run only the testing DB with docker and the tests with node.
+### Test DB in docker, but the tests in node
 
 ```bash
 docker compose up postgres_test
@@ -232,7 +294,7 @@ npm run test:e2e
 
 - Swagger documentation can be moved to an external file.
 - Error handling could be improved (e.g if user tries to modify a notification channel, not error is thrown but it's not allowed).
-- We need a way to register and validate the phone number and the emails that will be used in e-mail and sms channels.
+- SMS and PUSH notifications could be have a more serious implementation. Like adding a way to verify the phone number that will be used for SMS notifications, or making a more realistic integration of PUSH notifications. Also, we would need a way to register and the emails that will be used in the e-mail channel from the application, currently that is possible only on the provider's side.
 
 ## Technologies
 
