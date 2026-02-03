@@ -15,6 +15,9 @@ const generateDataSourceConfig = (
   synchronize: configuration.syncronize,
   migrations: configuration.migrations,
   migrationsTableName: 'migrations',
+  ssl: {
+    rejectUnauthorized: configuration.ssl_reject_unauthorized,
+  },
 });
 
 export default generateDataSourceConfig;
