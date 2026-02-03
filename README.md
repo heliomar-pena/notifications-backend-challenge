@@ -7,6 +7,10 @@ You have to build a system of notifications handling for authenticated users.
 
 The system must allow to each user manage and send notifications in different channels
 
+## App Running on
+
+- [Swagger](http://backend-challenge-a97513773692.herokuapp.com/api)
+
 ## Features
 
 ### Authentication
@@ -248,7 +252,7 @@ npm run test:e2e
 
 ## Routes
 
-- [API Swagger](http://localhost:3000/api)
+- Local: [API Swagger](http://localhost:3000/api)
 
 ## Env Vars
 
