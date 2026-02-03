@@ -10,7 +10,7 @@ const databaseConfig = registerAs('database', () => ({
   database: process.env.DATABASE,
   syncronize: process.env.DATABASE_SYNCRONIZE === 'true',
   ssl_reject_unauthorized:
-    process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === 'true',
+    process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false',
   migrations:
     process.env.DATABASE_RUN_SEEDS === 'true'
       ? [__dirname + '/migrations/**/*.ts', __dirname + '/seeds/**/*.ts']
