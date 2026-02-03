@@ -1,1 +1,2 @@
-web: npm i -g nest && npm start:prod
+web: npm i -g nest && npm run start:prod
+
